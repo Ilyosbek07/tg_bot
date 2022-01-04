@@ -1,19 +1,20 @@
 import requests
 import telebot
 from telebot import types
+from telegram import message
 
-from keyboards import welcome, menu_keyboard, category, order, get_back_keyboard, get_order, saveorder, \
+from new_bot.keyboards import welcome, menu_keyboard, category, order, get_back_keyboard, get_order, saveorder, \
 	get_order_basket, location
-from utils import save_user, save_order
+from new_bot.utils import save_user, save_order
 
 bot = telebot.TeleBot('1905316073:AAHryt0EpZ-yZ1bcGhGo0rHe2EGqPtKJGPY')
-
 users = dict()
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
 	global user_order_id
+
 	user_order_id = message.chat.id
 
 	users[message.from_user.id] = dict()
@@ -29,35 +30,28 @@ def first_name(message):
 	try:
 		if message.contact.phone_number:
 			users[message.from_user.id]['number'] = message.contact.phone_number
+			bot.send_message(message.chat.id,
+							 'Manzilingizni kiriting',
+							 reply_markup=location()
+							 )
 			bot.register_next_step_handler(message, menu)
-
-
 	except:
 		bot.send_message(message.chat.id,
 						 'Xato!')
 		bot.register_next_step_handler(message, first_name)
 
 
-def location_user(message):
-	try:
-
-		bot.send_message(message.chat.id,
-						 'Manzilingizni kiriting', reply_markup=location())
-		bot.register_next_step_handler(message, menu)
-	except:
-		bot.send_message(message.chat.id,
-						 'Xato!')
-		bot.register_next_step_handler(message, location)
-
-
 def menu(message):
-	# users[message.from_user.id]['address'] = message.text
+	users[message.from_user.id]['address'] = message
+	# print(message.from_user)
 	data = users[message.from_user.id]
 	number = data.get('number', '-')
-	# address = data.get('address', '-')
+	# address1 = data.get('address', '-')
+	# address = str(address1)
 	save_user(message, number)
+	print(number)
 	bot.send_message(message.chat.id,
-					 f'Salom *{message.from_user.first_name}'
+					 f'Salom *{message.from_user.first_name}* '
 					 f'ro\'yxatdan o\'tish muvafiyaqatli o\'tdingiz.',
 					 reply_markup=menu_keyboard(), parse_mode='Markdown'
 					 )
@@ -83,10 +77,8 @@ def buttons(message):
 			data = i
 		firstname = data['first_name']
 		number = data['number']
-		address = data['address']
 		bot.send_message(message.chat.id, f'*👤 Ism:* {firstname},\n\n'
-										  f'*📞 Nomer:* {number},\n'
-										  f'\n*📍 Manzil:* {address}',
+										  f'*📞 Nomer:* {number},\n',
 						 parse_mode='Markdown')
 
 	elif message.text == '📦 Buyurtmalarim':
@@ -96,13 +88,18 @@ def buttons(message):
 			for order in data:
 				bot.send_message(message.chat.id,
 								 f'*ID:* {order["id"]},\n'
-								 f'\n*Tovar:* {order["product"]},\n\n'
-								 f'*Narxi:* {order["price"]}{"$"},\n'
-								 f'\n*Manzil:* {order["address"]}'
+								 f'\n*Tovar:* {order["title"]},\n\n'
+								 f'*Narxi:* {order["price"]}{"sum"},\n'
 								 f'\n\n*Holati:* {order["order"] or ["Tastiqlanman"]}',
 								 parse_mode='Markdown')
 		else:
 			bot.send_message(message.chat.id, 'Sizda buyurtmalar yo\'q')
+
+	elif message.text == '🏠 Bosh menyu':
+		bot.send_message(message.chat.id,
+						 '🏠 Bosh menyu',
+						 reply_markup=menu_keyboard())
+		bot.delete_message(message.chat.id, message.id)
 
 	elif message.text == '⬅️ Orqaga':
 		bot.send_message(message.chat.id,
@@ -187,6 +184,9 @@ def order_comment(call):
 		pk = call.data.split('_')[1]
 		product = requests.get(f'http://127.0.0.1:8000/api/products/{pk}/').json()
 		user = requests.get(f'http://127.0.0.1:8000/api/user/{call.from_user.id}/').json()
+		# print(pk)
+		# print(product)
+		# print(user)
 		for i in user:
 			user = i
 		order = {"p_id": product["id"],
@@ -195,16 +195,16 @@ def order_comment(call):
 						 f'(username: {user["username"]})',
 				 "product": product["title"],
 				 "price": product["price"],
-				 "number": user["number"],
-				 "address": f'{user["address"]}',
+				 "number": user["number"]
 				 }
 		save_order(order)
+		print(order)
 		bot.delete_message(call.message.chat.id, call.message.id)
 		bot.send_message(call.message.chat.id,
 						 f'Buyurtmangiz yuborildi ✅\n'
 						 f'ID: {product["id"]}\n'
 						 f'Tovar: {product["title"]}\n'
-						 f'Narxi: {product["price"]}{"$"}\n'
+						 f'Narxi: {product["price"]}{"sum"}\n'
 						 f'Miqdori: {call.data.split("_")[2]}\n',
 						 reply_markup=menu_keyboard())
 	except:

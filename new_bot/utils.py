@@ -22,7 +22,6 @@ def save_user(message, number):
         'first_name': message.from_user.first_name,
         'last_name': message.from_user.last_name,
         'number': number,
-        # 'address': address,
     }
     requests.post(url='http://127.0.0.1:8000/api/users/register/', data=post_data)
 

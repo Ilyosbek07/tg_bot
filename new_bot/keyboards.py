@@ -17,7 +17,7 @@ def menu_keyboard():
 	keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 	btn1 = types.KeyboardButton('🛍 Bo\'limlar va mahsulotlar')
 	btn2 = types.KeyboardButton('🛒 Korzina')
-	btn3 = types.KeyboardButton('👤 Mening ma\'limotlarim')
+	btn3 = types.KeyboardButton('👤 Mening ma\'lumotlarim')
 	btn4 = types.KeyboardButton('📦 Buyurtmalarim')
 	btn5 = types.KeyboardButton('ℹ️ Biz haqimizda')
 	keyboard.add(btn1)

@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
-
+# from decouple import config
 # os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = config('SECRET_KEY')
 SECRET_KEY = 'django-insecure-i5_xwhb8hjji*gi(!-%r15)!57xe#hac7&_ljgg%n=ghbczf6)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -78,6 +79,17 @@ WSGI_APPLICATION = 'bot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 BOT_TOKEN = '1905316073:AAGiie7cyMWGL1ZejPRlPfNe2hVGCIP6i0A'
+# BOT_TOKEN = config('BOT_TOKEN')
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+# 		'NAME': config('DB_NAME'),
+# 		'USER': config('DB_USER'),
+# 		'PASSWORD': config('DB_PASS'),
+# 		'HOST': config('DB_HOST'),
+# 		'PORT': config('DB_PORT'),
+# 	}
+# }
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
@@ -121,10 +133,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOD = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -144,4 +154,3 @@ REST_FRAMEWORK = {
 		'rest_framework.permissions.AllowAny'
 	]
 }
-# TOKEN_KEY = '5055885408:AAHw9rqAwkHBwQUp3aR8p0Kb8HQn4XDsP4M'

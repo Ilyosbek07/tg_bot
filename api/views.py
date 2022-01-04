@@ -10,6 +10,15 @@ class CategoryModelListAPIView(ListAPIView):
 	serializer_class = CategoryModelSerializer
 
 
+class OrderListAPIView(ListAPIView):
+	serializer_class = OrderModelSerializer
+
+	def get_queryset(self):
+		pk = self.kwargs.get('pk')
+
+		return OrderModel.objects.filter(user_id=pk)
+
+
 class ProductModelListAPIView(ListAPIView):
 	serializer_class = ProductModelSerializer
 
@@ -23,6 +32,7 @@ class ProductModelListAPIView(ListAPIView):
 			return ProductModel.objects.filter(category_id=pk)
 		else:
 			return ProductModel.objects.none()
+
 
 class ProductModelRetrieveAPIView(RetrieveAPIView):
 	serializer_class = ProductModelSerializer
@@ -44,5 +54,4 @@ class UserModelListAPIView(ListAPIView):
 
 
 class UserModelCreateAPIView(CreateAPIView):
-	queryset = UserModel.objects.all()
 	serializer_class = UserModelSerializer

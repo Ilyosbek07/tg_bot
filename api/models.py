@@ -16,15 +16,15 @@ class CategoryModel(models.Model):
 
 class UserModel(models.Model):
 	tg_id = models.IntegerField(unique=True)
-	user_name = models.CharField(max_length=75)
-	first_name = models.CharField(max_length=75, null=True, blank=True)
+	user_name = models.CharField(max_length=75, unique=True, null=True, blank=True)
+	first_name = models.CharField(max_length=75)
 	last_name = models.CharField(max_length=75, null=True, blank=True)
 	number = models.CharField(max_length=75)
-	address = models.CharField(max_length=75)
+	address = models.CharField(max_length=75, null=True, blank=True)
 	created_at = models.DateField(auto_now_add=True)
 
 	def __str__(self):
-		return self.user_name
+		return f'{self.user_name} ({self.first_name}) | {self.last_name}'
 
 	class Meta:
 		verbose_name = 'User'
@@ -59,9 +59,23 @@ class OrderModel(models.Model):
 	title = models.CharField(max_length=55)
 	price = models.IntegerField()
 	number = models.CharField(max_length=55)
-	address = models.CharField(max_length=255)
-
+	address = models.CharField(max_length=255, null=True)
+	soni = models.CharField(max_length=55)
+	TASDIQLANDI = 'TASDIQLANDI'
+	TASDIQLANMADI = 'TASDIQLANMADI'
+	Xolati = [
+		(TASDIQLANDI, 'Tasdiqlandi'),
+		(TASDIQLANMADI, 'tASDIQLANMADI'),
+	]
+	order = models.CharField(
+		max_length=255,
+		choices=Xolati,
+		default=TASDIQLANMADI,
+	)
 	created_at = models.DateField(auto_now_add=True)
+
+	def __str__(self):
+		return self.title
 
 	class Meta:
 		verbose_name = 'Order'
